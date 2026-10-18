@@ -1,45 +1,72 @@
-# dsh-context-budget
+# 上下文预算
 
-**Manage MCP servers and toggle skills in DeepSeek Harness — and hide tool groups from the next prompt with token-cost estimates.** Budget changes need no config edit, no restart and no MCP process churn; MCP server edits write the normal patch file and apply through HMR.
+**在 DeepSeek Harness 里管理 MCP 服务器与 Skill，并控制下一轮 prompt 的工具 schema 成本。**
 
-![Context budget](assets/context-budget.svg)
+[![release](https://img.shields.io/github/v/release/jidekaixin2dian/dsh-context-budget?label=release&color=c8f663)](https://github.com/jidekaixin2dian/dsh-context-budget/releases)
+[![license](https://img.shields.io/github/license/jidekaixin2dian/dsh-context-budget?label=license&color=c8f663)](https://github.com/jidekaixin2dian/dsh-context-budget/blob/main/LICENSE)
 
-## Why
+[English](README.en.md)
 
-Every MCP tool is sent as a full JSON Schema on every request. A server with dozens of tools can quietly consume more context than the conversation itself. Configuration managers can add, remove or toggle servers, but the prompt is still paid on the next turn.
+![上下文预算示意](assets/readme-budget.svg)
 
-This plugin manages three things in one page:
+> 同一组 MCP 服务器，只把这一轮不需要的工具组移出 prompt。图中的数量是一个例子，实际取决于你安装的服务器和 Skill。
 
-- **MCP servers** — list, add, edit, remove, enable/disable; writes the profile/global `cordis.patch.yml` and lets HMR apply it.
-- **Skills** — search, create, delete, and enable/disable one skill through a rank-0 override provider.
-- **Prompt budget** — group the effective tools by MCP server, hide a whole group, see the approximate cost, and restore it without restarting the MCP process.
+## 它解决什么
 
-## Install
+每个 MCP 工具在每次请求里都会带上完整 JSON Schema。工具多的服务器会悄悄吃掉大量上下文，甚至超过对话本身。
 
-From GitHub (no build step; `lib/` is included):
+配置管理器能增删服务器，但下一轮 prompt 仍然要付这份成本。这个插件把两件事分开：
+
+- **配置**：MCP 服务器增删改启停，Skill 新建、删除、启停；
+- **暴露**：按 MCP 服务器或 Skill 分组，把整组 schema 从当前会话的 prompt 里隐藏，随时恢复。
+
+## 三个入口
+
+| 页面 | 你可以做什么 | 生效方式 |
+| --- | --- | --- |
+| 上下文预算 | 查看完整、当前、已节省 token；隐藏或恢复 MCP、Skill、记忆、定时任务组 | 下一次请求 |
+| MCP 服务器 | 新增、编辑、删除、启停；支持 stdio 的 command/args/env 和 streamable-http 的 url/headers | DSH HMR |
+| Skills | 搜索、新建、删除、单 Skill 启停 | rank-0 override provider |
+
+核心工具始终保留，不提供隐藏开关。
+
+## 安装
+
+从 GitHub 安装，包含 `lib/`，不需要构建：
 
 ```sh
-dsh plugin --profile <your-profile> add github:jidekaixin2dian/dsh-context-budget
+dsh plugin --profile <profile> add github:jidekaixin2dian/dsh-context-budget
 ```
 
-For the official desktop app, install through its plugin manager if it manages the profile for you. Restart DSH once after installing the host half, then hard-refresh the web UI.
+桌面端如果由应用自己的插件管理器管理 profile，请在应用内安装。安装或更新 host 半后，**退出并重新打开 DSH**。桌面端没有浏览器式 `Ctrl+R` 硬刷新，换 client bundle 只能重开应用。
 
-## Use
+## 使用
 
-Open **Settings → Context budget**:
+打开 **设置 -> 上下文预算**，有三个 tab。
 
-- **Context budget** tab:
-  - **All visible** — clear every override;
-  - **Hide all MCP** — one switch for every `mcp__<server>__*` group;
-  - **Hide largest group** — the group with the biggest schema cost;
-  - **Lean** — MCP + Skill + memory + schedule off;
-  - per-server MCP rows, Skill catalog, memory tools, schedule tools.
-- **MCP servers** tab: add/edit/remove, enable/disable; stdio command/args/env or streamable-http URL/headers.
-- **Skills** tab: search, create/delete user or project skills, and toggle individual skills.
+### 上下文预算
 
-A read-only **Core tools** row is always kept.
+- **全部显示**：清除所有隐藏；
+- **关闭全部 MCP**：一次隐藏所有 `mcp__<server>__*` 分组；
+- **关闭最大组**：按估算 token 选当前最大的一组；
+- **精简模式**：MCP、Skill、记忆、定时任务全部关闭；
+- 每个 MCP 服务器一行，另有 Skill 目录、记忆工具、定时任务。
 
-Model tool:
+### MCP 服务器
+
+- 列表显示 serverName、transport、目标、启用状态和写入位置；
+- 新增或编辑时可以选择写入 profile 或 global 的 `cordis.patch.yml`；
+- stdio 使用 command/args/env，streamable-http 使用 url/headers；
+- 保存后由 HMR 应用，不需要重启。
+
+### Skills
+
+- 搜索、查看描述、单 Skill 启停；
+- 新建 Skill 可写入用户 `~/.dsh/skills` 或项目 `.dsh/skills`；
+- 删除会移到 `.trash`，不会硬删除文件；
+- 停用通过 rank-0 override provider，不改写 Skill 文件。
+
+模型工具：
 
 ```text
 context_budget action=status
@@ -47,37 +74,45 @@ context_budget action=session disabled=["mcp:github", "skills"]
 context_budget action=reset
 ```
 
-`mcp` is a wildcard for all MCP servers; `mcp:<server>` targets one. The global budget applies to every session and subagent; `action=session` only overrides the current session.
+`mcp` 是全部 MCP 的通配，`mcp:<server>` 只针对一台服务器。设置页的全局预算作用于所有会话和子代理，`action=session` 只覆盖当前会话。
 
-## How it works
+## 它怎么工作
 
-The budget half applies `ctx.tools.restrict({ deny })` on the agent scope during `agent/pre-step`. The tool schemas are removed from prompt assembly before the request is sent. It listens to `tools/change`, `agent/created` and `agent/status` so dynamic MCP additions and subagents get the restriction too.
+预算部分在 `agent/pre-step` 里对 agent 作用域调用 `ctx.tools.restrict({ deny })`，工具 schema 在 prompt 组装前被移除；监听 `tools/change`、`agent/created`、`agent/status`，动态 MCP 工具和子代理也会被覆盖。
 
-The MCP tab edits the profile/global `cordis.patch.yml` line by line (unrelated rows and comments survive); DSH HMR applies the changed MCP row. The Skill tab registers a rank-0 override provider with `modelInvocable:false` for disabled names.
+MCP 部分按行编辑 profile 或 global 的 `cordis.patch.yml`，保留无关行和注释；DSH HMR 应用变更。Skill 部分注册 rank-0 override provider，把停用项的 `modelInvocable` 设为 `false`。
 
-Token numbers are estimates from the serialized JSON schemas plus Skill catalog descriptions, not a provider tokenizer.
+token 数按序列化 JSON schema 加 Skill 描述估算，不是模型分词器的精确值。
 
-## Compatibility
+## 兼容与边界
 
-- **Dynamic MCP managers** that register tools in the agent scope (for example lazy MCP loading) are respected: their tools are shown in the `scoped` count, but `ctx.tools.restrict` cannot hide scoped registrations. Use that manager's own unload.
-- **Other MCP/Skills managers** own their own rows and files; this plugin edits only `@deepseek-ai/dsh-mcp-client` rows it manages and its own skill override. `tools/change` picks up their changes.
-- **dsh-context** reads request headers; hiding tools here reduces its tool-schema row and the actual prompt together.
+- **动态 MCP 管理器**把工具注册在 agent 作用域时，设置页会显示 `scoped` 数量，但 `ctx.tools.restrict` 无法隐藏这类注册，请用对应管理器的 unload。
+- **其他 MCP 或 Skills 管理器**继续负责它们自己的行和文件；本插件只编辑 `@deepseek-ai/dsh-mcp-client` 行和自己的 override。
+- **dsh-context** 读取请求头；本插件隐藏工具后，它的工具 schema 行和实际 prompt 会一起下降。
+- 只用预算时 MCP 进程仍然存活，省的是 prompt token，不是内存。
+- MCP CRUD 会写 `cordis.patch.yml`；如果手工改过该文件，保存前先看 diff。
+- Skill 停用走全局注册表；只在 scoped provider 出现的 Skill 可能无法隐藏。
+- ZIP 或文件夹导入 Skill 暂未实现；新建和删除已经支持。
+- 需要先知道工具 schema 才能计算限制；首个请求会校准完整基线。
+- host 半更新需要重开 DSH，client 半更新同样需要重开。
 
-## Limits
-
-- MCP processes stay alive when only the budget is used; this saves prompt tokens, not RAM.
-- MCP CRUD writes `cordis.patch.yml`; DSH HMR applies it. Review the diff if you hand-edited the file.
-- Skill toggles use the global skill registry; a skill discovered only in a scoped provider may not be hidable.
-- Skill file import from ZIP/folder is not implemented; create writes `~/.dsh/skills/<name>/SKILL.md` or `<cwd>/.dsh/skills/<name>/SKILL.md`, delete moves to `.trash`.
-- Tool descriptions/schemas must be known before a restriction can be computed; a first request may calibrate the full baseline.
-- Host-half updates need a DSH restart; client-half updates need a hard refresh.
-
-## Development
+## 开发
 
 ```sh
 npm test
 ```
 
-Pure grouping rules are in `lib/groups.js`; the host and browser halves are hand-written ESM/CJS to keep the package dependency-free.
+当前 9 个单元测试覆盖分组规则、MCP 行编辑和 Skill 文件操作。
 
-MIT.
+- `lib/groups.js`：工具分组规则；
+- `lib/mcp-config.js`：MCP 行编辑；
+- `lib/skills-config.js`：Skill 文件新建与删除；
+- `lib/index.js` 和 `lib/client.js`：host 与设置页。
+
+## 链接
+
+- [GitHub 仓库](https://github.com/jidekaixin2dian/dsh-context-budget)
+- [Releases](https://github.com/jidekaixin2dian/dsh-context-budget/releases)
+- [English README](README.en.md)
+
+MIT
