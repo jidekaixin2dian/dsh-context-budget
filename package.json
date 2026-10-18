@@ -1,7 +1,7 @@
 {
-  "name": "dsh-context-budget",
-  "version": "0.1.3",
-  "description": "Live per-session MCP/Skill context budget for DeepSeek Harness. Hide heavy tool groups instantly, with cost estimates, without editing config or restarting.",
+  "name": "@jidekaixin2dian/dsh-context-budget",
+  "version": "0.1.0",
+  "description": "Per-session context budget for DeepSeek Harness: hide MCP server, Skill, memory and schedule tool groups, with token estimates, without editing config or restarting.",
   "type": "module",
   "main": "lib/index.js",
   "exports": {
@@ -13,8 +13,32 @@
     "lib",
     "cordis.patch.yml",
     "README.md",
-    "README.zh.md"
+    "README.zh.md",
+    "LICENSE",
+    "icon.svg",
+    "assets"
   ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jidekaixin2dian/dsh-context-budget.git"
+  },
+  "homepage": "https://github.com/jidekaixin2dian/dsh-context-budget#readme",
+  "bugs": {
+    "url": "https://github.com/jidekaixin2dian/dsh-context-budget/issues"
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "mcp",
+    "skills",
+    "context",
+    "tokens"
+  ],
+  "author": "jidekaixin2dian",
   "dsh": {
     "bundle": {
       "patch": "./cordis.patch.yml"

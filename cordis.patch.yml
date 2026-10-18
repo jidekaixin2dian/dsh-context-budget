@@ -2,4 +2,4 @@
 # makes the web app load ./client as the browser half.
 - insert:
     - id: dsh-context-budget
-      name: dsh-context-budget
+      name: '@jidekaixin2dian/dsh-context-budget'
