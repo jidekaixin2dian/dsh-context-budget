@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" role="img" aria-label="工具 schema 数量示意：从 267 个降到 60 个">
+  <rect width="1200" height="360" fill="#f3f4ed"/>
+
+  <text x="60" y="150" fill="#151515" font-family="Noto Serif SC, Source Han Serif SC, Songti SC, SimSun, serif" font-size="100" font-weight="700">267</text>
+  <text x="60" y="190" fill="#6f6f66" font-family="Noto Sans SC, Microsoft YaHei, sans-serif" font-size="18">个工具进入 prompt</text>
+
+  <path d="M470 135h180" stroke="#151515" stroke-width="2"/>
+  <path d="M650 135l-12-7M650 135l-12 7" stroke="#151515" stroke-width="2" fill="none"/>
+  <text x="476" y="116" fill="#151515" font-family="Noto Sans SC, Microsoft YaHei, sans-serif" font-size="17">隐藏整组</text>
+
+  <text x="720" y="150" fill="#151515" font-family="Noto Serif SC, Source Han Serif SC, Songti SC, SimSun, serif" font-size="100" font-weight="700">60</text>
+  <text x="720" y="190" fill="#6f6f66" font-family="Noto Sans SC, Microsoft YaHei, sans-serif" font-size="18">个工具进入 prompt</text>
+
+  <rect x="60" y="250" width="600" height="18" fill="#151515" opacity=".14"/>
+  <rect x="60" y="290" width="135" height="18" fill="#c8f663"/>
+
+  <text x="60" y="340" fill="#6f6f66" font-family="Noto Sans SC, Microsoft YaHei, sans-serif" font-size="14">一个例子。实际数量取决于已安装的 MCP 服务器和 Skill。</text>
+</svg>
