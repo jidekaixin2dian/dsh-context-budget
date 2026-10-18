@@ -1,70 +1,48 @@
 # Context Budget
 
-**Manage MCP servers and skills in DeepSeek Harness, and control the tool-schema cost of the next prompt.**
-
-[![release](https://img.shields.io/github/v/release/jidekaixin2dian/dsh-context-budget?label=release&color=c8f663)](https://github.com/jidekaixin2dian/dsh-context-budget/releases)
-[![license](https://img.shields.io/github/license/jidekaixin2dian/dsh-context-budget?label=license&color=c8f663)](https://github.com/jidekaixin2dian/dsh-context-budget/blob/main/LICENSE)
+Manage MCP servers and skills in DeepSeek Harness, and control the tool cost of the next prompt.
 
 [中文](README.md)
 
-![Context budget](assets/readme-budget.svg)
+![Context budget](assets/readme-hero.svg)
 
-> Same MCP servers, only the schemas this turn needs. The counts are one example; actual numbers depend on the installed servers and skills.
+Every MCP tool carries a full JSON Schema into the request. A server with dozens of tools can take up more context than the conversation itself.
 
-## What it solves
+Configuration managers can add or remove servers, but the next prompt still pays for every schema. This plugin separates configuration from exposure:
 
-Every MCP tool carries a full JSON Schema on every request. A server with dozens of tools can consume more context than the conversation itself.
+**MCP servers.** Add, edit, remove, enable or disable in Settings. The change writes the profile or global `cordis.patch.yml` and applies through HMR.
 
-Configuration managers can add or remove servers, but the next prompt still pays for every schema. This plugin separates two jobs:
+**Skills.** Search, create, delete, toggle one skill. New skills can go to the user or project directory; deleted skills move to `.trash`.
 
-- **Configuration:** add, edit, remove, enable or disable MCP servers; create, delete or toggle skills.
-- **Exposure:** group tools by MCP server or skill, remove a whole group from the current session's prompt, and restore it at any time.
+**Context budget.** Group tools by MCP server, hide the groups this turn does not need, and restore them later. MCP processes keep running.
 
-## Three surfaces
-
-| Page | What you can do | When it applies |
-| --- | --- | --- |
-| Context budget | See full, current and saved token estimates; hide or restore MCP, skill, memory and schedule groups | Next request |
-| MCP servers | Add, edit, remove, enable or disable; stdio command/args/env or streamable-http url/headers | DSH HMR |
-| Skills | Search, create, delete, toggle one skill | rank-0 override provider |
-
-Core tools stay visible and have no hide switch.
+![Tool schema count](assets/readme-schema.svg)
 
 ## Install
-
-Install from GitHub. `lib/` is included, so no build step is needed:
 
 ```sh
 dsh plugin --profile <profile> add github:jidekaixin2dian/dsh-context-budget
 ```
 
-On the desktop app, install through its plugin manager when that manager owns the profile. After installing or updating the host half, **quit and reopen DSH**. The desktop app has no browser-style `Ctrl+R` hard refresh; a client bundle change needs an app restart.
+On the desktop app, install through its plugin manager when that manager owns the profile. After installing or updating the host half, quit and reopen DSH. The desktop app has no browser-style `Ctrl+R` hard refresh; a client bundle change needs an app restart.
 
 ## Use
 
-Open **Settings -> Context Budget**. There are three tabs.
+Open **Settings -> Context Budget**.
 
 ### Context budget
 
-- **All visible:** clear every override.
-- **Hide all MCP:** hide every `mcp__<server>__*` group.
-- **Hide largest group:** pick the group with the biggest estimated cost.
-- **Lean:** turn off MCP, skill, memory and schedule groups.
-- One row per MCP server, plus skill catalog, memory tools and schedule tools.
+**All visible** clears every override. **Hide all MCP** hides every `mcp__<server>__*` group. **Hide largest group** picks the group with the biggest estimated cost. **Lean** turns off MCP, skill, memory and schedule groups.
+
+One row per MCP server, plus skill catalog, memory tools and schedule tools. Core tools stay visible and have no hide switch.
 
 ### MCP servers
 
-- Rows show serverName, transport, target, enabled state and write location.
-- Add or edit into the profile or global `cordis.patch.yml`.
-- stdio uses command/args/env; streamable-http uses url/headers.
-- HMR applies the change; no restart is needed for the MCP row itself.
+Rows show serverName, transport, target, enabled state and write location. Add or edit into the profile or global `cordis.patch.yml`. stdio uses command/args/env; streamable-http uses url/headers. HMR applies the change; no restart is needed for the MCP row itself.
 
 ### Skills
 
-- Search, inspect descriptions, toggle one skill.
-- Create into user `~/.dsh/skills` or project `.dsh/skills`.
-- Delete moves the skill to `.trash` instead of hard-deleting it.
-- Disable uses a rank-0 override provider and does not rewrite the skill file.
+Search, inspect descriptions, toggle one skill. Create into user `~/.dsh/skills` or project `.dsh/skills`. Delete moves the skill to `.trash` instead of hard-deleting it. Disable uses a rank-0 override provider and does not rewrite the skill file.
 
 Model tool:
 
@@ -84,7 +62,7 @@ The MCP half edits the profile or global `cordis.patch.yml` line by line and lea
 
 Token numbers are estimates from serialized JSON schemas plus skill descriptions, not a provider tokenizer.
 
-## Compatibility and limits
+## Boundaries
 
 - A dynamic MCP manager that registers tools in the agent scope is respected: the settings page reports a `scoped` count, but `ctx.tools.restrict` cannot hide those registrations. Use that manager's unload.
 - Other MCP or skill managers keep their own rows and files. This plugin edits only `@deepseek-ai/dsh-mcp-client` rows and its own override.
