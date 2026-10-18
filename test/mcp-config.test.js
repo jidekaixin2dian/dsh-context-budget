@@ -59,3 +59,20 @@ test('MCP add / edit / disable / remove round-trip', () => {
     temp.restore()
   }
 })
+
+test('MCP level is preserved for global rows', () => {
+  const temp = withTempProfile()
+  try {
+    addServer({ serverName: 'gdemo', transport: 'stdio', command: 'npx', level: 'global' })
+    let listing = listServers()
+    assert.equal(listing.rows[0].level, 'global')
+    editServer({ id: 'gdemo', serverName: 'gdemo', transport: 'stdio', command: 'node', level: 'global' })
+    listing = listServers()
+    assert.equal(listing.rows[0].level, 'global')
+    assert.equal(listing.rows[0].config.command, 'node')
+    removeServer('gdemo')
+    assert.equal(listServers().rows.length, 0)
+  } finally {
+    temp.restore()
+  }
+})
