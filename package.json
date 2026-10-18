@@ -1,6 +1,6 @@
 {
   "name": "@jidekaixin2dian/dsh-context-budget",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Manage MCP servers and skills in DeepSeek Harness, and hide tool groups from the next prompt with token-cost estimates. Budget changes need no config edit or restart.",
   "icon": "icon.svg",
   "type": "module",
@@ -58,7 +58,7 @@
     }
   },
   "peerDependencies": {
-    "@deepseek-ai/dsh-tools": "*"
+    "@deepseek-ai/dsh-tools": ">=0.2.0-rc.1 <0.2.1-0 || >=0.2.1-rc.1 <0.3.0-0"
   },
   "license": "MIT"
 }
