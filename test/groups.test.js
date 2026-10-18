@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 import {
   FIXED_LABELS, groupOf, isDisabled, labelOf, matchesDisabled, normalizeDisabled,
 } from '../lib/groups.js'
+import { parseServers } from '../lib/mcp-config.js'
 
 test('MCP tool names group by server, not by a hardcoded REA id', () => {
   assert.equal(groupOf('mcp__rea__decompile'), 'mcp:rea')
@@ -35,3 +36,32 @@ test('wildcard mcp disables every MCP server, not other groups', () => {
   assert.equal(isDisabled('mcp:rea', ['mcp:rea']), true)
   assert.equal(isDisabled('mcp:github', ['mcp:rea']), false)
 })
+
+test('profile patch rows parse MCP config and disabled overrides', () => {
+  const sample = [
+    '# dsh-context-budget:server:demo',
+    '- insert:',
+    '    - id: demo',
+    "      name: '@deepseek-ai/dsh-mcp-client'",
+    '      config:',
+    '        serverName: demo',
+    '        transport: stdio',
+    '        command: npx',
+    '        args:',
+    '          - -y',
+    '          - pkg',
+    '        env:',
+    '          TOKEN: "x"',
+    '- id: demo',
+    "  name: '@deepseek-ai/dsh-mcp-client'",
+    '  disabled: true',
+  ].join('\n')
+  const rows = parseServers(sample, 'project')
+  assert.equal(rows.length, 1)
+  assert.equal(rows[0].id, 'demo')
+  assert.equal(rows[0].config.serverName, 'demo')
+  assert.equal(rows[0].config.command, 'npx')
+  assert.deepEqual(rows[0].config.args, ['-y', 'pkg'])
+  assert.equal(rows[0].disabled, true)
+})
+
