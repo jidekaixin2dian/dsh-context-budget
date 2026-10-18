@@ -1,0 +1,46 @@
+# dsh-context-budget
+
+DeepSeek Harness 的**会话级上下文预算器**。重点不是再做一个 MCP 配置编辑器，而是即时、可逆地控制“这一轮模型到底要背多少工具 schema”。
+
+## 解决什么
+
+DSH 的 MCP 工具（尤其 REA 的 207 个）在每个请求里都会把完整 JSON Schema 送进上下文。配置管理器可以改服务器，但通常要改 `cordis.patch.yml`、重载或重启；而上下文已经付过了。
+
+本插件用 `ctx.tools.restrict()` 在 **agent 作用域**里隐藏工具，因此：
+
+- 改完下一次请求即生效；
+- 不修改 `cordis.patch.yml`，不重启 DSH；
+- 不停止 MCP 进程，恢复时不需要重连；
+- 可按全局默认，也可用模型工具对单个会话覆盖；
+- 同时管理 MCP、REA、Skill 目录、记忆工具、定时任务。
+
+## 使用
+
+安装后重启一次 DSH（host 半），浏览器硬刷新（client 半），打开 **设置 → 上下文预算**：
+
+- 顶部显示完整 / 当前 / 已节省的 token 估算；
+- 预设：全部显示、只关 REA、MCP 全关、精简模式；
+- 分组开关：REA、其他 MCP、Skill 目录、记忆工具、定时任务；
+- 核心工具只读保留。
+
+模型工具 `context_budget`：
+
+```text
+status                          # 查看当前会话预算
+session disabled=["rea"]        # 只覆盖本会话
+reset                           # 恢复全局默认
+```
+
+## 与现有插件的差异
+
+- `@guowenzhang/dsh-mcp-manager` 重在动态加载、连接池和工具检索；
+- `@xxxyz/dsh-mcp-manager` 重在 MCP/Skills 配置 CRUD 和设置页；
+- 本插件重在**上下文预算**：一次点击即时隐藏、成本可见、可撤销，不碰配置文件。三者可以共存，不互相替代。
+
+## 限制
+
+- MCP 进程仍然存活，只是 schema 不进入 prompt；内存占用不会因此下降。
+- token 数是按 schema JSON / Skill 描述估算，实际以模型分词器为准。
+- Skill 组目前是整组开关（隐藏 `skill` 工具和目录）；单 Skill 开关留待后续。
+- 子代理/Workflow 在 `agent/created`、`agent/status`、`agent/pre-step` 三处兜底应用；重启后建议用一个 workflow 子会话复验。
+- 安装/升级 host 半需要重启 DSH 一次；client 半硬刷新即可。
