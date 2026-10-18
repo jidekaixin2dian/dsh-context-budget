@@ -4,7 +4,7 @@
 
 [English](README.en.md)
 
-![上下文预算](assets/readme-hero.svg)
+![上下文预算](assets/readme-title.svg)
 
 每个 MCP 工具都会把完整 JSON Schema 带进请求。工具多的服务器会占掉大量上下文，甚至超过对话本身。
 

@@ -4,7 +4,7 @@ Manage MCP servers and skills in DeepSeek Harness, and control the tool cost of 
 
 [中文](README.md)
 
-![Context budget](assets/readme-hero.svg)
+![Context budget](assets/readme-title.svg)
 
 Every MCP tool carries a full JSON Schema into the request. A server with dozens of tools can take up more context than the conversation itself.
 
