@@ -45,6 +45,14 @@ reset                           # 恢复全局默认
 - 子代理/Workflow 在 `agent/created`、`agent/status`、`agent/pre-step` 三处兜底应用；重启后建议用一个 workflow 子会话复验。
 - 安装/升级 host 半需要重启 DSH 一次；client 半硬刷新即可。
 
+## 社区插件适配
+
+- **@guowenzhang/dsh-mcp-manager（动态加载 / lazy-mcp）**：监听 `tools/change`，动态工具增删后重建基线并在下一步重新应用；它把按需工具注册在 agent 作用域，`ctx.tools.restrict` 无法隐藏这类 scoped 工具，设置页会显示 `scoped` 数量并提示改用该插件的 `mcp_unload`。
+- **@xxxyz/dsh-mcp-manager**：它写 `cordis.patch.yml` / Skills override，本插件不写配置；两者不会互相覆盖，服务器开关触发的工具变化由 `tools/change` 捕获。
+- **@michengai/dsh-skills-manager**：它的 rank-0 override 仍负责单 Skill 启停；本插件隐藏 `skill` 工具/目录时是整组预算控制，不修改它的状态。
+- **dsh-context**：本插件只减少实际工具 schema，`dsh-context` 的请求头统计会同步下降；两者不抢同一 slot。
+- **dsh-better-sidebar**：只注册 `settings.section`（order 18），不注册侧栏 tab，不与它的 side chat/文件树竞争。
+
 ## 验证记录（2026-10-19）
 
 - 安装到 `desktop` profile，bundle 已注册；profile 文件已备份
