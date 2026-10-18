@@ -1,6 +1,6 @@
 {
   "name": "dsh-context-budget",
-  "version": "0.1.1",
+  "version": "0.1.3",
   "description": "Live per-session MCP/Skill context budget for DeepSeek Harness. Hide heavy tool groups instantly, with cost estimates, without editing config or restarting.",
   "type": "module",
   "main": "lib/index.js",
