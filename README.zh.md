@@ -1,6 +1,6 @@
 # dsh-context-budget
 
-**在 DeepSeek Harness 里管理 MCP 服务器、启停 Skill，并把工具组从下一轮 prompt 中隐藏，附 token 成本估算。** 预算调整不改配置、不重启、不停止 MCP；MCP 服务器的增删改写回正常 patch 文件，通过 HMR 生效。
+**在 DeepSeek Harness 里管理 MCP 服务器、Skill，并把工具组从下一轮 prompt 中隐藏，附 token 成本估算。** 预算调整不改配置、不重启、不停止 MCP；MCP 服务器的增删改写回正常 patch 文件，通过 HMR 生效。
 
 ![上下文预算](assets/context-budget.svg)
 
@@ -11,7 +11,7 @@
 这个插件把三件事放在一页：
 
 - **MCP 服务器**：列表、新增、编辑、删除、启用/停用；写 profile/global 的 `cordis.patch.yml`，HMR 生效。
-- **Skills**：搜索目录，按单个 Skill 启用/停用（rank-0 override provider）。
+- **Skills**：搜索目录，新建/删除（移到 .trash），按单个 Skill 启用/停用（rank-0 override provider）。
 - **Prompt 预算**：按 MCP 服务器分组，整组隐藏/恢复，显示完整/当前/已节省 token 估算；MCP 进程继续存活。
 
 ## 安装
@@ -46,6 +46,7 @@ dsh plugin --profile <你的 profile> add github:jidekaixin2dian/dsh-context-bud
 ### Skills
 
 - 搜索、查看描述、单 Skill 启用/停用；
+- 新建 Skill 可写用户 `~/.dsh/skills` 或项目 `.dsh/skills`；删除会移到 `.trash`；
 - 停用通过 rank-0 override provider，不改 Skill 文件。
 
 模型工具：
@@ -77,7 +78,7 @@ token 数按序列化 JSON schema 加 Skill 描述估算，不是模型分词器
 - 只用预算时 MCP 进程仍然存活；省的是 prompt token，不是内存。
 - MCP CRUD 会写 `cordis.patch.yml`；如果手工改过该文件，保存前先看 diff。
 - Skill 停用走全局注册表；只在 scoped provider 出现的 Skill 可能无法隐藏。
-- 本页暂不包含 Skill 文件的新建/导入/删除，Skills tab 是目录级启停。
+- 本页支持新建/删除 Skill 文件（用户或项目目录，删除移到 `.trash`）；ZIP/文件夹导入暂未实现。
 - 需要先知道工具 schema 才能计算限制；首个请求会校准完整基线。
 - host 半更新需要重启 DSH；client 半硬刷新即可。
 
@@ -87,6 +88,6 @@ token 数按序列化 JSON schema 加 Skill 描述估算，不是模型分词器
 npm test
 ```
 
-分组规则在 `lib/groups.js`，MCP 行编辑在 `lib/mcp-config.js`；host/client 手写 ESM/CJS，保持零额外依赖。
+分组规则在 `lib/groups.js`，MCP 行编辑在 `lib/mcp-config.js`，Skill 文件操作在 `lib/skills-config.js`；host/client 手写 ESM/CJS，保持零额外依赖。
 
 MIT。

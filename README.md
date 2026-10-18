@@ -11,7 +11,7 @@ Every MCP tool is sent as a full JSON Schema on every request. A server with doz
 This plugin manages three things in one page:
 
 - **MCP servers** — list, add, edit, remove, enable/disable; writes the profile/global `cordis.patch.yml` and lets HMR apply it.
-- **Skills** — search the catalog and enable/disable one skill through a rank-0 override provider.
+- **Skills** — search, create, delete, and enable/disable one skill through a rank-0 override provider.
 - **Prompt budget** — group the effective tools by MCP server, hide a whole group, see the approximate cost, and restore it without restarting the MCP process.
 
 ## Install
@@ -35,7 +35,7 @@ Open **Settings → Context budget**:
   - **Lean** — MCP + Skill + memory + schedule off;
   - per-server MCP rows, Skill catalog, memory tools, schedule tools.
 - **MCP servers** tab: add/edit/remove, enable/disable; stdio command/args/env or streamable-http URL/headers.
-- **Skills** tab: search and toggle individual skills.
+- **Skills** tab: search, create/delete user or project skills, and toggle individual skills.
 
 A read-only **Core tools** row is always kept.
 
@@ -68,7 +68,7 @@ Token numbers are estimates from the serialized JSON schemas plus Skill catalog 
 - MCP processes stay alive when only the budget is used; this saves prompt tokens, not RAM.
 - MCP CRUD writes `cordis.patch.yml`; DSH HMR applies it. Review the diff if you hand-edited the file.
 - Skill toggles use the global skill registry; a skill discovered only in a scoped provider may not be hidable.
-- Skill file create/import/delete is not part of this page yet; the Skills tab is catalog-level enable/disable.
+- Skill file import from ZIP/folder is not implemented; create writes `~/.dsh/skills/<name>/SKILL.md` or `<cwd>/.dsh/skills/<name>/SKILL.md`, delete moves to `.trash`.
 - Tool descriptions/schemas must be known before a restriction can be computed; a first request may calibrate the full baseline.
 - Host-half updates need a DSH restart; client-half updates need a hard refresh.
 
