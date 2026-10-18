@@ -44,3 +44,18 @@ reset                           # 恢复全局默认
 - Skill 组目前是整组开关（隐藏 `skill` 工具和目录）；单 Skill 开关留待后续。
 - 子代理/Workflow 在 `agent/created`、`agent/status`、`agent/pre-step` 三处兜底应用；重启后建议用一个 workflow 子会话复验。
 - 安装/升级 host 半需要重启 DSH 一次；client 半硬刷新即可。
+
+## 验证记录（2026-10-19）
+
+- 安装到 `desktop` profile，bundle 已注册；profile 文件已备份
+  （`package.json.bak-20261019-001158-context-budget`、
+  `cordis.patch.yml.bak-20261019-001158-context-budget`）。
+- `POST /dsh-context-budget/api` `status` 返回 200，能读出 207 个 REA 工具、
+  22 个 Skill、17 个记忆工具。
+- 主会话验证：设置 `disabled=["rea"]` 后，下一次真实请求的 DSH 工具数
+  **266 → 60，REA = 0**；网关日志同步显示 `tools: 261 -> 54 (no-rea)`。
+- 子代理/Workflow 的兜底补丁（`agent/created`、`agent/status`、`agent/pre-step`）
+  已写入，但运行中的桌面实例仍加载旧 host 代码，**需要在重启后用一个
+  workflow 子会话复验**；当前不把它写成已通过。
+- 设置页的 client 半尚未在重启后做浏览器截图验证。
+
