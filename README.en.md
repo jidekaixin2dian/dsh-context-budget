@@ -1,6 +1,6 @@
-# Context Budget
+# Toolgate
 
-Manage MCP servers and skills in DeepSeek Harness, and control the tool cost of the next prompt.
+Manage MCP servers and skills in DeepSeek Harness, and choose which tools enter the next prompt.
 
 [中文](README.md)
 
@@ -13,16 +13,16 @@ The plugin separates configuration from exposure. Configuration owns servers and
 ## Install
 
 ```sh
-dsh plugin --profile <profile> add github:jidekaixin2dian/dsh-context-budget
+dsh plugin --profile <profile> add github:jidekaixin2dian/dsh-toolgate
 ```
 
 On the desktop app, install through its plugin manager when that manager owns the profile. After installing or updating the host half, quit and reopen DSH. The desktop app has no browser-style `Ctrl+R` hard refresh.
 
 ## Use
 
-Open **Settings -> Context Budget**.
+Open **Settings -> Toolgate**.
 
-**Context budget** groups tools by MCP server, hides the groups this turn does not need, and restores them later. MCP processes keep running. All visible, hide all MCP, hide largest group and lean mode live here.
+**Toolgate** groups tools by MCP server, hides the groups this turn does not need, and restores them later. MCP processes keep running. All visible, hide all MCP, hide largest group and lean mode live here.
 
 **MCP servers** add, edit, remove, enable or disable. The change writes the profile or global `cordis.patch.yml` and applies through HMR. stdio uses command/args/env; streamable-http uses url/headers.
 
@@ -31,9 +31,9 @@ Open **Settings -> Context Budget**.
 Model tool:
 
 ```text
-context_budget action=status
-context_budget action=session disabled=["mcp:github", "skills"]
-context_budget action=reset
+toolgate action=status
+toolgate action=session disabled=["mcp:github", "skills"]
+toolgate action=reset
 ```
 
 `mcp` is the wildcard for all MCP servers; `mcp:<server>` targets one. The settings page applies globally to sessions and subagents; `action=session` overrides only the current session.
@@ -57,6 +57,7 @@ Token numbers are estimates from serialized schemas and skill descriptions, not 
 npm test
 ```
 
-Nine unit tests cover grouping rules, MCP row editing and skill file operations.
+Seventeen unit tests cover grouping rules, MCP row editing, the HTTP contract and skill file operations.
 
-[GitHub](https://github.com/jidekaixin2dian/dsh-context-budget) · [Releases](https://github.com/jidekaixin2dian/dsh-context-budget/releases) · MIT
+[GitHub](https://github.com/jidekaixin2dian/dsh-toolgate) · [Releases](https://github.com/jidekaixin2dian/dsh-toolgate/releases) · MIT
+

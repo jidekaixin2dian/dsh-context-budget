@@ -1,7 +1,7 @@
 {
-  "name": "@jidekaixin2dian/dsh-context-budget",
-  "version": "0.1.2",
-  "description": "Manage MCP servers and skills in DeepSeek Harness, and hide tool groups from the next prompt with token-cost estimates. Budget changes need no config edit or restart.",
+  "name": "@jidekaixin2dian/dsh-toolgate",
+  "version": "0.1.0",
+  "description": "Manage MCP servers and skills in DeepSeek Harness, and control which tools enter the next prompt. Budget changes need no config edit or restart.",
   "icon": "icon.svg",
   "type": "module",
   "main": "lib/index.js",
@@ -27,11 +27,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jidekaixin2dian/dsh-context-budget.git"
+    "url": "git+https://github.com/jidekaixin2dian/dsh-toolgate.git"
   },
-  "homepage": "https://github.com/jidekaixin2dian/dsh-context-budget#readme",
+  "homepage": "https://github.com/jidekaixin2dian/dsh-toolgate#readme",
   "bugs": {
-    "url": "https://github.com/jidekaixin2dian/dsh-context-budget/issues"
+    "url": "https://github.com/jidekaixin2dian/dsh-toolgate/issues"
   },
   "keywords": [
     "dsh",
@@ -62,3 +62,4 @@
   },
   "license": "MIT"
 }
+

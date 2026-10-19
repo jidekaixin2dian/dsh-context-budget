@@ -39,7 +39,7 @@ test('wildcard mcp disables every MCP server, not other groups', () => {
 
 test('profile patch rows parse MCP config and disabled overrides', () => {
   const sample = [
-    '# dsh-context-budget:server:demo',
+    '# dsh-toolgate:server:demo',
     '- insert:',
     '    - id: demo',
     "      name: '@deepseek-ai/dsh-mcp-client'",
@@ -64,4 +64,21 @@ test('profile patch rows parse MCP config and disabled overrides', () => {
   assert.deepEqual(rows[0].config.args, ['-y', 'pkg'])
   assert.equal(rows[0].disabled, true)
 })
+
+test('legacy context-budget markers still count as managed rows', () => {
+  const sample = [
+    '# dsh-context-budget:server:legacy',
+    '- insert:',
+    '    - id: legacy',
+    "      name: '@deepseek-ai/dsh-mcp-client'",
+    '      config:',
+    '        serverName: legacy',
+    '        transport: stdio',
+  ].join('\n')
+  const rows = parseServers(sample, 'project')
+  assert.equal(rows.length, 1)
+  assert.equal(rows[0].id, 'legacy')
+  assert.equal(rows[0].managed, true)
+})
+
 

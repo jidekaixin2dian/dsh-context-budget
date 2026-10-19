@@ -25,3 +25,4 @@ test('requestArgs ignores a non-object args value', () => {
   assert.equal(requestArgs(flat), flat)
   assert.deepEqual(requestArgs({ op: 'status', args: ['x'] }), { op: 'status', args: ['x'] })
 })
+

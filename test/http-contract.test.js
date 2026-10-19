@@ -17,16 +17,16 @@ function withTempProfile() {
   fs.mkdirSync(profile, { recursive: true })
   fs.writeFileSync(path.join(profile, 'cordis.patch.yml'), '[]\n')
   fs.writeFileSync(path.join(root, 'cordis.patch.yml'), '[]\n')
-  const oldProfile = process.env.DSH_CONTEXT_BUDGET_PROFILE_DIR
-  const oldHome = process.env.DSH_CONTEXT_BUDGET_HOME
-  process.env.DSH_CONTEXT_BUDGET_PROFILE_DIR = profile
-  process.env.DSH_CONTEXT_BUDGET_HOME = root
+  const oldProfile = process.env.DSH_TOOLGATE_PROFILE_DIR
+  const oldHome = process.env.DSH_TOOLGATE_HOME
+  process.env.DSH_TOOLGATE_PROFILE_DIR = profile
+  process.env.DSH_TOOLGATE_HOME = root
   return {
     restore() {
-      if (oldProfile === undefined) delete process.env.DSH_CONTEXT_BUDGET_PROFILE_DIR
-      else process.env.DSH_CONTEXT_BUDGET_PROFILE_DIR = oldProfile
-      if (oldHome === undefined) delete process.env.DSH_CONTEXT_BUDGET_HOME
-      else process.env.DSH_CONTEXT_BUDGET_HOME = oldHome
+      if (oldProfile === undefined) delete process.env.DSH_TOOLGATE_PROFILE_DIR
+      else process.env.DSH_TOOLGATE_PROFILE_DIR = oldProfile
+      if (oldHome === undefined) delete process.env.DSH_TOOLGATE_HOME
+      else process.env.DSH_TOOLGATE_HOME = oldHome
       fs.rmSync(root, { recursive: true, force: true })
     },
   }
@@ -76,3 +76,5 @@ test('wrapped set payload applies the disabled groups instead of clearing them',
     temp.restore()
   }
 })
+
+

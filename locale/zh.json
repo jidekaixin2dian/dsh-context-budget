@@ -1,6 +1,7 @@
 {
   "meta": {
-    "title": "上下文预算",
+    "title": "工具闸门",
     "description": "管理 MCP 服务器与 Skill，并可把工具组从下一轮 prompt 中隐藏，附 token 成本估算。"
   }
 }
+

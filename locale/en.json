@@ -1,6 +1,7 @@
 {
   "meta": {
-    "title": "Context Budget",
+    "title": "Toolgate",
     "description": "Manage MCP servers and skills in DeepSeek Harness, and hide tool groups from the next prompt with token-cost estimates."
   }
 }
+

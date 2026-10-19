@@ -45,3 +45,4 @@ test('reject invalid skill names and duplicate create', () => {
     fs.rmSync(root, { recursive: true, force: true })
   }
 })
+

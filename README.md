@@ -1,6 +1,6 @@
-# 上下文预算
+# 工具闸门
 
-管理 MCP 服务器与 Skill，控制下一轮 prompt 的工具成本。
+管理 MCP 服务器与 Skill，决定下一轮 prompt 带哪些工具。
 
 [English](README.en.md)
 
@@ -13,16 +13,16 @@
 ## 安装
 
 ```sh
-dsh plugin --profile <profile> add github:jidekaixin2dian/dsh-context-budget
+dsh plugin --profile <profile> add github:jidekaixin2dian/dsh-toolgate
 ```
 
 桌面端由应用管理 profile 时，请在插件管理器里安装。安装或更新 host 半后，退出并重新打开 DSH；桌面端没有浏览器式 `Ctrl+R` 硬刷新。
 
 ## 使用
 
-打开 **设置 -> 上下文预算**。
+打开 **设置 -> 工具闸门**。
 
-**上下文预算** 按 MCP 服务器分组，隐藏这一轮不需要的整组 schema，随时恢复。MCP 进程继续运行。全部显示、关闭全部 MCP、关闭最大组、精简模式都在这一页。
+**预算** 按 MCP 服务器分组，隐藏这一轮不需要的整组 schema，随时恢复。MCP 进程继续运行。全部显示、关闭全部 MCP、关闭最大组、精简模式都在这一页。
 
 **MCP 服务器** 新增、编辑、删除、启停，写 profile 或 global 的 `cordis.patch.yml`，HMR 生效。stdio 用 command/args/env，streamable-http 用 url/headers。
 
@@ -31,9 +31,9 @@ dsh plugin --profile <profile> add github:jidekaixin2dian/dsh-context-budget
 模型工具：
 
 ```text
-context_budget action=status
-context_budget action=session disabled=["mcp:github", "skills"]
-context_budget action=reset
+toolgate action=status
+toolgate action=session disabled=["mcp:github", "skills"]
+toolgate action=reset
 ```
 
 `mcp` 是全部 MCP 的通配，`mcp:<server>` 只针对一台服务器。设置页的全局预算作用于所有会话和子代理，`action=session` 只覆盖当前会话。
@@ -57,6 +57,7 @@ token 数按序列化 schema 和 Skill 描述估算，不是模型分词器的�
 npm test
 ```
 
-9 个单元测试覆盖分组规则、MCP 行编辑和 Skill 文件操作。
+17 个单元测试覆盖分组规则、MCP 行编辑、HTTP 契约和 Skill 文件操作。
 
-[GitHub](https://github.com/jidekaixin2dian/dsh-context-budget) · [Releases](https://github.com/jidekaixin2dian/dsh-context-budget/releases) · MIT
+[GitHub](https://github.com/jidekaixin2dian/dsh-toolgate) · [Releases](https://github.com/jidekaixin2dian/dsh-toolgate/releases) · MIT
+
