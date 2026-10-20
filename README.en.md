@@ -18,15 +18,19 @@ dsh plugin --profile <profile> add github:jidekaixin2dian/dsh-toolgate
 
 On the desktop app, install through its plugin manager when that manager owns the profile. After installing or updating the host half, quit and reopen DSH. The desktop app has no browser-style `Ctrl+R` hard refresh.
 
+Requires Node >=24. Management endpoints require the host's `connection.requestRejection()` and current `profileContext`; integration tests pin DSH **0.2.1-rc.2**. Missing authentication closes the endpoint. A missing profile never falls back to an arbitrary installed profile.
+
 ## Use
 
 Open **Settings -> Toolgate**.
 
 **Toolgate** groups tools by MCP server, hides the groups this turn does not need, and restores them later. MCP processes keep running. All visible, hide all MCP, hide largest group and lean mode live here.
 
-**MCP servers** add, edit, remove, enable or disable. The change writes the profile or global `cordis.patch.yml` and applies through HMR. stdio uses command/args/env; streamable-http uses url/headers.
+**MCP servers** add, edit, remove, enable or disable in the selected profile/global patch files, applied through HMR. YAML edits preserve sibling entries, unknown fields and comments. Originals are backed up under `DSH_HOME/backups/toolgate/`. Environment/header values are not returned to the client: leave their replacement controls unchecked to retain them; checking a control and leaving it empty explicitly clears that map.
 
-**Skills** search, create, delete, toggle one skill. New skills can go to the user or project directory; deleted skills move to `.trash`.
+Effective state follows the host: bundle → profile → global → launcher overlays. Toggles update the last writable layer. Editing keeps the definition in its original layer. Ambiguous IDs, dynamic target nodes, config overrides and read-only sources are rejected when they cannot be safely edited.
+
+**Skills** select a Session workspace before listing, creating, deleting or toggling. Project roots follow the host's nearest-`.git` rule, falling back to the Session cwd; user roots use the selected DSH_HOME. Rows retain provider/source/path identity. Only matching local `.dsh/skills/<name>/SKILL.md` directory bundles can move to `.trash`. Shared `.agents`, bundled, custom and virtual sources are read-only. Scoped providers that cannot be overridden have their toggle disabled.
 
 Model tool:
 
@@ -40,9 +44,9 @@ toolgate action=reset
 
 ## How it works
 
-The budget half calls `ctx.tools.restrict({ deny })` during `agent/pre-step`, so tool schemas leave prompt assembly before the request is sent. The MCP half edits `cordis.patch.yml` line by line and leaves unrelated rows and comments intact; HMR applies it. The skill half registers a rank-0 override provider and sets `modelInvocable:false` for disabled names.
+The budget half uses per-instance state and `ctx.tools.restrict({ deny })` during `agent/pre-step`. Unload lifts owned restrictions; Agent disposal clears its state. The MCP half edits parsed YAML nodes and uses the host composer for effective state. The skill half uses a rank-0 override provider with persisted source identities and project roots.
 
-Token numbers are estimates from serialized schemas and skill descriptions, not a provider tokenizer.
+Token numbers estimate serialized schema/description character counts, not provider tokenization, costs or latency. Known unhideable scoped tools are excluded from projected savings.
 
 ## Boundaries
 
@@ -50,14 +54,22 @@ Token numbers are estimates from serialized schemas and skill descriptions, not 
 - MCP CRUD writes `cordis.patch.yml`. Review the diff if you hand-edited the file.
 - ZIP or folder import of skills is not implemented. A skill found only in a scoped provider may not be hideable.
 - Host and client half updates both need an app restart.
+- Hiding tools is context budgeting, not a permission sandbox. Session overrides can restore groups; MCP processes keep running.
+- Configuration backups contain original secrets. Keep them private; see [SECURITY.md](SECURITY.md).
 
 ## Development
 
 ```sh
+npm ci --ignore-scripts --legacy-peer-deps
 npm test
+npm run setup:host
+npm run test:host
+npm run pack:check
 ```
 
-Seventeen unit tests cover grouping rules, MCP row editing, the HTTP contract and skill file operations.
+Git and pnpm are required; the pinned host uses pnpm 11.28.5. Host source and temporary DSH_HOME data stay under `work/`, without production profiles or API keys. `TOOLGATE_HOST` can select an existing clean checkout at the exact pinned commit.
+
+Unit regressions cover precise YAML changes, complex arguments, patch precedence, failed-write rollback and path/source identity. The host suite uses real Cordis/tools/skills, HTTP and Cookie authentication. With `TOOLGATE_BROWSER=1` it also exercises the actual React settings page in Edge on Windows or Chromium on Linux (`npx --no-install playwright install --with-deps chromium`). CI runs unit, host, browser and package-install checks on Windows and Linux. These settings tests do not certify the complete Desktop shell or real-model behavior.
 
 [GitHub](https://github.com/jidekaixin2dian/dsh-toolgate) · [Releases](https://github.com/jidekaixin2dian/dsh-toolgate/releases) · MIT
 
