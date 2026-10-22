@@ -11,7 +11,7 @@ const result = spawnSync(process.execPath, [npm, 'pack', '--ignore-scripts', '--
 assert.equal(result.status, 0, result.stderr)
 const parsed = JSON.parse(result.stdout)
 const packed = Array.isArray(parsed) ? parsed[0] : Object.values(parsed)[0]
-assert.ok(packed.files.every(file => /^(lib\/[^/]+\.js|locale\/[^/]+\.json|assets\/[^/]+\.svg|README(?:\.en|\.zh)?\.md|LICENSE|SECURITY\.md|package\.json|cordis\.patch\.yml|icon\.svg)$/.test(file.path)))
+assert.ok(packed.files.every(file => /^(lib\/[^/]+\.js|locale\/[^/]+\.json|assets\/[^/]+\.svg|README(?:\.en|\.zh)?\.md|CHANGELOG\.md|LICENSE|SECURITY\.md|package\.json|cordis\.patch\.yml|icon\.svg)$/.test(file.path)))
 for (const entry of ['lib/index.js', 'lib/client.js', 'lib/mcp-config.js', 'lib/skills-runtime.js', 'lib/host-paths.js', 'lib/config-files.js']) assert.ok(packed.files.some(file => file.path === entry), entry)
 const archive = join(directory, packed.filename)
 const audit = { filename: packed.filename, bytes: packed.size, sha256: createHash('sha256').update(fs.readFileSync(archive)).digest('hex'), files: packed.files.map(file => file.path) }
