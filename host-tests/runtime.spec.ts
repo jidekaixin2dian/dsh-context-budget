@@ -241,7 +241,7 @@ it.skipIf(process.env.TOOLGATE_BROWSER !== '1')('real browser settings preserve 
     const rejection = h.ctx.connection.requestRejection(req)
     if (rejection !== undefined) { res.writeHead(rejection); res.end(); return }
     res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' })
-    res.end('<!doctype html><meta name="viewport" content="width=device-width"><div id="app"></div><script>' + boot.replaceAll('</script', '<\\/script') + '</script><script>' + client + '</script>')
+    res.end('<!doctype html><meta name="viewport" content="width=device-width"><div id="app"></div><script>' + boot.replaceAll('</script', '<\\/script') + '</script><script>const factory = "unrelated plugin";</script><script>' + client + '</script>')
   } }))
   const browser = await chromium.launch(process.platform === 'win32' ? { channel: 'msedge' } : {})
   onTestFinished(() => browser.close())
