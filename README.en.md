@@ -1,5 +1,7 @@
 # Toolgate
 
+`main` contains **0.1.1 unreleased** fixes for authentication, precise configuration editing and lifecycle cleanup. The **v0.1.0** Release archive does not include them; use the GitHub-source installation below. See [Changelog](CHANGELOG.md) and [Security](SECURITY.md).
+
 Manage MCP servers and skills in DeepSeek Harness, and choose which tools enter the next prompt.
 
 [中文](README.md)

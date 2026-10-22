@@ -1,6 +1,6 @@
 {
   "name": "@jidekaixin2dian/dsh-toolgate",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Manage MCP servers and skills in DeepSeek Harness, and control which tools enter the next prompt. Budget changes need no config edit or restart.",
   "icon": "icon.svg",
   "type": "module",

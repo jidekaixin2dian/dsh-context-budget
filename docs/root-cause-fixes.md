@@ -1,5 +1,10 @@
 # Configuration and lifecycle fixes
 
+2026-10-23 follow-up: Skill toggles restore the running provider when persistence
+fails. State writes use exclusive, private, unique temporary files and remove
+them on failure. The new real-host regression brings the suite to 10 tests;
+the original 2026-10-20 results below remain dated historical evidence.
+
 Recorded 2026-10-20 (UTC+8). Runtime verification pins official DSH 0.2.1-rc.2, commit `687f282e8625c6b8d11ff58211a90524be2e4317`. All profiles, credentials and Skill bodies in tests are disposable/synthetic. There is no production-profile migration or new release in this change.
 
 | Audit item | Cause and resulting behavior | Regression coverage |

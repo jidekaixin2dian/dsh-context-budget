@@ -1,5 +1,7 @@
 # 工具闸门
 
+`main` 包含 **0.1.1 待发布**修复，已纳入管理接口认证、YAML 精确编辑和生命周期修复。Release **v0.1.0** 附件尚未包含这些修复；使用下方 GitHub 源码安装方式。见[变更记录](CHANGELOG.md)与[安全说明](SECURITY.md)。
+
 管理 MCP 服务器与 Skill，决定下一轮 prompt 带哪些工具。
 
 [English](README.en.md)

@@ -110,6 +110,20 @@ it('missing host authentication fails closed and malformed or oversized JSON can
   expect((await h.post('status')).value.disabled).toEqual([])
 })
 
+it('failed Skill persistence leaves the running provider unchanged and cleans its temporary file', async () => {
+  const h = await harness({ prepare(home) { skill(join(home, 'skills'), 'save-test') } })
+  const row = (await h.post('skills-list')).value.skills.find((item: any) => item.name === 'save-test')
+  const statePath = join(h.home, 'toolgate.json')
+  fs.mkdirSync(statePath)
+  const result = await h.post('skill-toggle', { ...row, enabled: false })
+  expect(result.status).toBe(400)
+  expect((await h.post('skills-list')).value.skills.find((item: any) => item.name === 'save-test').disabled).toBe(false)
+  expect((await h.ctx.skills.get('save-test', { cwd: h.a }))!.invocation.modelInvocable).toBe(true)
+  expect(fs.readdirSync(h.home).filter(name => name.endsWith('.tmp'))).toEqual([])
+  fs.rmdirSync(statePath)
+  expect((await h.post('skill-toggle', { ...row, enabled: false })).value.ok).toBe(true)
+})
+
 it('restrictions lift on plugin unload and new instances do not retain session overrides', async () => {
   const h = await harness(), agent = await h.create('lead')
   expect(await h.execute(agent, { action: 'session', disabled: ['mcp'] })).toMatchObject({ isError: false })
