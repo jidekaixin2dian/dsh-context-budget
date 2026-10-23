@@ -1,6 +1,6 @@
 # Toolgate
 
-`main` contains **0.1.1 unreleased** fixes for authentication, precise configuration editing and lifecycle cleanup. The **v0.1.0** Release archive does not include them; use the GitHub-source installation below. See [Changelog](CHANGELOG.md) and [Security](SECURITY.md).
+**0.1.2** aligns the Release tag with its archive, including the client startup fix, authenticated management, precise YAML edits and lifecycle cleanup. See [Changelog](CHANGELOG.md) and [Security](SECURITY.md).
 
 Manage MCP servers and skills in DeepSeek Harness, and choose which tools enter the next prompt.
 
@@ -15,7 +15,7 @@ The plugin separates configuration from exposure. Configuration owns servers and
 ## Install
 
 ```sh
-dsh plugin --profile <profile> add github:jidekaixin2dian/dsh-toolgate
+dsh plugin --profile <profile> add https://github.com/jidekaixin2dian/dsh-toolgate/releases/latest/download/dsh-toolgate.tgz
 ```
 
 On the desktop app, install through its plugin manager when that manager owns the profile. After installing or updating the host half, quit and reopen DSH. The desktop app has no browser-style `Ctrl+R` hard refresh.
@@ -75,3 +75,7 @@ Unit regressions cover precise YAML changes, complex arguments, patch precedence
 
 [GitHub](https://github.com/jidekaixin2dian/dsh-toolgate) · [Releases](https://github.com/jidekaixin2dian/dsh-toolgate/releases) · MIT
 
+
+## Release verification
+
+Published releases are checked for tag/version consistency, archive files matching tagged source, and the GitHub download digest. Run **Release integrity** in Actions with a published tag to recheck it. Historical tags and assets remain unchanged.

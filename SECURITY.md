@@ -9,3 +9,8 @@ Only selected local `.dsh/skills/<name>/SKILL.md` directory bundles can be moved
 Tool hiding controls context exposure, not a security sandbox or a process boundary. Session overrides can restore groups, scoped tools may remain visible, and MCP processes continue running.
 
 For security reports use GitHub private vulnerability reporting when available. Do not put real credentials, cookies, launch URLs, configuration backups or private conversation contents in public issues or PRs.
+
+Release 0.1.1's uploaded archive contains the scoped client startup fix, but its
+Git tag predates that change. Use 0.1.2 or later for matching source and archive.
+Release integrity checks reject version drift, missing files and differences
+between archive content and tagged source (apart from checkout line endings).

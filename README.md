@@ -1,6 +1,6 @@
 # 工具闸门
 
-`main` 包含 **0.1.1 待发布**修复，已纳入管理接口认证、YAML 精确编辑和生命周期修复。Release **v0.1.0** 附件尚未包含这些修复；使用下方 GitHub 源码安装方式。见[变更记录](CHANGELOG.md)与[安全说明](SECURITY.md)。
+**0.1.2** 对齐 Release 标签与安装包，完整包含启动冲突修复、管理接口认证、YAML 精确编辑和生命周期修复。见[变更记录](CHANGELOG.md)与[安全说明](SECURITY.md)。
 
 管理 MCP 服务器与 Skill，决定下一轮 prompt 带哪些工具。
 
@@ -15,7 +15,7 @@
 ## 安装
 
 ```sh
-dsh plugin --profile <profile> add github:jidekaixin2dian/dsh-toolgate
+dsh plugin --profile <profile> add https://github.com/jidekaixin2dian/dsh-toolgate/releases/latest/download/dsh-toolgate.tgz
 ```
 
 桌面端由应用管理 profile 时，请在插件管理器里安装。安装或更新 host 半后，退出并重新打开 DSH；桌面端没有浏览器式 `Ctrl+R` 硬刷新。
@@ -75,3 +75,7 @@ npm run pack:check
 
 [GitHub](https://github.com/jidekaixin2dian/dsh-toolgate) · [Releases](https://github.com/jidekaixin2dian/dsh-toolgate/releases) · MIT
 
+
+## 发布校验
+
+发布时自动核对标签版本、包内文件与标签源码，并校验 GitHub 下载摘要。手动复核使用 Actions 中的 **Release integrity**，填入已发布标签；历史标签与附件保持原样。
