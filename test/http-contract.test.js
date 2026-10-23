@@ -35,7 +35,7 @@ function withTempProfile() {
 // Mirrors the route handler: payload -> requestArgs -> operation call.
 function dispatch(payload) {
   const args = requestArgs(payload)
-  if (payload.op === 'mcp-add') return addServer(args.row || args)
+  if (payload.op === 'mcp-add') return addServer(args.row)
   if (payload.op === 'mcp-enabled') return setServerEnabled(args.id, args.enabled !== false)
   if (payload.op === 'set') return normalizeDisabled(args.disabled)
   throw new Error('unexpected op ' + payload.op)
@@ -50,6 +50,16 @@ test('wrapped mcp-add payload actually creates the server', () => {
     })
     assert.equal(listServers().rows.length, 1)
     assert.equal(listServers().rows[0].config.serverName, 'demo')
+  } finally {
+    temp.restore()
+  }
+})
+
+test('flat mcp-add payloads are rejected instead of silently interpreted', () => {
+  const temp = withTempProfile()
+  try {
+    assert.throws(() => dispatch({ op: 'mcp-add', args: { serverName: 'flat', transport: 'stdio', command: 'npx' } }), /serverName/)
+    assert.equal(listServers().rows.length, 0)
   } finally {
     temp.restore()
   }

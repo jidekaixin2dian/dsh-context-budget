@@ -28,7 +28,7 @@ dsh plugin --profile <profile> add https://github.com/jidekaixin2dian/dsh-toolga
 
 **预算** 按 MCP 服务器分组，隐藏这一轮不需要的整组 schema，随时恢复。MCP 进程继续运行。全部显示、关闭全部 MCP、关闭最大组、精简模式都在这一页。
 
-**MCP 服务器** 新增、编辑、删除、启停，写当前 profile 或 global 的 `cordis.patch.yml`，HMR 生效。stdio 用 command/args/env，streamable-http 用 url/headers。编辑保留同块兄弟配置、未知字段和注释；写前备份到 `DSH_HOME/backups/toolgate/`。env/headers 不回传明文，编辑时默认保留；勾选“替换”后才写入新值，勾选后留空表示清空。
+**MCP 服务器** 新增、编辑、删除、启停，写当前 profile 或 global 的 `cordis.patch.yml`，HMR 生效。stdio 用 command/args/env，streamable-http 用 url/headers。编辑保留同块兄弟配置、未知字段和注释；写前备份到 `DSH_HOME/backups/toolgate/`，成功写入后仅保留最近 20 份备份。env/headers 不回传明文，编辑时默认保留；勾选“替换”后才写入新值，勾选后留空表示清空。每次管理写入在 `DSH_HOME/toolgate-audit.jsonl` 追加一行审计记录（操作、目标、结果、时间，不含秘密值）。
 
 有效配置遵循宿主顺序：bundle → profile → global → 启动 overlays。启停更新最后的可写覆盖层；编辑保留定义所在层，不隐式搬移。有动态 YAML、重复 id、config 覆盖或只读来源时，会明确拒绝不能安全完成的操作。
 
@@ -43,6 +43,8 @@ toolgate action=reset
 ```
 
 `mcp` 是全部 MCP 的通配，`mcp:<server>` 只针对一台服务器。设置页的全局预算作用于所有会话和子代理，`action=session` 只覆盖当前会话。
+
+在插件配置中设置 `allowSessionOverride: false` 可以禁止模型工具修改会话覆盖：`action=session` 和 `action=reset` 只返回提示、不做任何改动，全局闸门仍可在本设置页修改。适合担心提示注入关闭审计类工具、希望把闸门钉死在全局设置的场景。
 
 ## 原理
 

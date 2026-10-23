@@ -29,7 +29,7 @@ function skill(root: string, name: string, body = 'synthetic') {
   return join(dir, 'SKILL.md')
 }
 
-async function harness(options: { connection?: boolean; prepare?: (home: string, a: string, b: string) => void } = {}) {
+async function harness(options: { connection?: boolean; pluginConfig?: Record<string, unknown>; prepare?: (home: string, a: string, b: string) => void } = {}) {
   if (!process.env.DSH_HOME?.includes('test-home-')) throw new Error('isolated home required')
   const home = fs.mkdtempSync(join(process.env.DSH_HOME, 'case-'))
   const a = join(home, 'workspace-a'), b = join(home, 'workspace-b'), profile = join(home, 'profiles', 'selected')
@@ -56,7 +56,7 @@ async function harness(options: { connection?: boolean; prepare?: (home: string,
   ctx.provide('dshHomePath', (...parts: string[]) => join(home, ...parts))
   ctx.tools.register(defineTool({ name: 'mcp__test__ping', description: 'synthetic MCP', parameters: {},
     output: { schema: { type: 'string' }, render: (_args, value) => [{ type: 'text', text: value }] }, execute: () => 'pong' }))
-  let fiber = await ctx.plugin(plugin)
+  let fiber = await ctx.plugin(plugin, options.pluginConfig)
   const origin = ctx.webServer.getOrigin()
   let cookie = ''
   if (options.connection !== false) {
@@ -133,6 +133,28 @@ it('restrictions lift on plugin unload and new instances do not retain session o
   await h.reload()
   expect(await h.execute(agent, { action: 'status' })).toMatchObject({ isError: false })
   expect(h.ctx.tools.get('mcp__test__ping', agent)).toBeDefined()
+})
+
+it('allowSessionOverride=false keeps the model tool read-only: session and reset change nothing', async () => {
+  const h = await harness({ pluginConfig: { allowSessionOverride: false } }), agent = await h.create('pinned')
+  const blocked = await h.execute(agent, { action: 'session', disabled: ['mcp'] })
+  expect(blocked).toMatchObject({ isError: false })
+  expect(String((blocked as any).value)).toContain('allowSessionOverride=false')
+  expect(h.ctx.tools.get('mcp__test__ping', agent)).toBeDefined()
+  const reset = await h.execute(agent, { action: 'reset' })
+  expect(String((reset as any).value)).toContain('allowSessionOverride=false')
+  expect(await h.execute(agent, { action: 'status' })).toMatchObject({ isError: false })
+})
+
+it('management writes append audit lines without secret values', async () => {
+  const h = await harness()
+  await h.post('mcp-add', { row: { serverName: 'audited', command: 'node', env: { TOKEN: 'synthetic-secret' } } })
+  await h.post('mcp-remove', { id: 'audited' })
+  const auditPath = join(h.home, 'toolgate-audit.jsonl')
+  const entries = fs.readFileSync(auditPath, 'utf8').trim().split('\n').map(JSON.parse)
+  expect(entries.find((row: any) => row.op === 'mcp-add')?.id).toBe('audited')
+  expect(entries.find((row: any) => row.op === 'mcp-remove')?.id).toBe('audited')
+  expect(JSON.stringify(entries)).not.toContain('synthetic-secret')
 })
 
 it('global budget applies to newly created Agents and disposed Agent state cannot hide tools on replacement', async () => {
