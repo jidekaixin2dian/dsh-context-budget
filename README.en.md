@@ -28,7 +28,7 @@ Open **Settings -> Toolgate**.
 
 **Toolgate** groups tools by MCP server, hides the groups this turn does not need, and restores them later. MCP processes keep running. All visible, hide all MCP, hide largest group and lean mode live here.
 
-**MCP servers** add, edit, remove, enable or disable in the selected profile/global patch files, applied through HMR. YAML edits preserve sibling entries, unknown fields and comments. Originals are backed up under `DSH_HOME/backups/toolgate/`. Environment/header values are not returned to the client: leave their replacement controls unchecked to retain them; checking a control and leaving it empty explicitly clears that map.
+**MCP servers** add, edit, remove, enable or disable in the selected profile/global patch files, applied through HMR. YAML edits preserve sibling entries, unknown fields and comments. Originals are backed up under `DSH_HOME/backups/toolgate/`, keeping only the 20 most recent copies after successful writes. Every management write appends an audit line (operation, target, outcome, timestamp — never secret values) to `DSH_HOME/toolgate-audit.jsonl`. Environment/header values are not returned to the client: leave their replacement controls unchecked to retain them; checking a control and leaving it empty explicitly clears that map.
 
 Effective state follows the host: bundle → profile → global → launcher overlays. Toggles update the last writable layer. Editing keeps the definition in its original layer. Ambiguous IDs, dynamic target nodes, config overrides and read-only sources are rejected when they cannot be safely edited.
 
@@ -43,6 +43,8 @@ toolgate action=reset
 ```
 
 `mcp` is the wildcard for all MCP servers; `mcp:<server>` targets one. The settings page applies globally to sessions and subagents; `action=session` overrides only the current session.
+
+Set `allowSessionOverride: false` in the plugin config to make the model tool read-only: `action=session` and `action=reset` return a notice and change nothing, while the global gate stays editable on the settings page. Use it when prompt injection might otherwise talk an agent into hiding audit tooling.
 
 ## How it works
 

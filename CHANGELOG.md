@@ -1,5 +1,23 @@
 # Changelog
 
+## Unreleased
+
+- Add an append-only audit log at `DSH_HOME/toolgate-audit.jsonl`: one JSON line
+  per management write (op, target id, outcome, timestamp), never containing
+  env/header values. It rotates past 1 MiB to `.1` and a failed append never
+  blocks the operation it records.
+- Tighten the management API: `mcp-add` and `mcp-edit` now accept only the
+  documented `{ row }` payload; flattened probe bodies are rejected with the
+  normal validation error instead of being silently interpreted.
+- Add the `allowSessionOverride` plugin config (default `true`). Set it to `false`
+  to make the `toolgate` model tool read-only: `action=session` and `action=reset`
+  return a notice without changing tool visibility, so prompt-injected turns
+  cannot hide tool groups; the authenticated settings page still owns the gate.
+- Cap configuration backups at the 20 most recent copies under
+  `DSH_HOME/backups/toolgate/`; pruning runs after a successful write only, so
+  failed writes keep their recovery copy. Backup directories are matched by the
+  exact `timestamp-uuid` naming pattern and foreign entries are never removed.
+
 ## 0.1.2 — 2026-10-23
 
 - Align the release tag and archive, including the scoped client bundle. The

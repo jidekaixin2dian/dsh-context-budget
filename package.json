@@ -65,7 +65,8 @@
   "peerDependencies": {
     "@deepseek-ai/cordis-plugin-include": "*",
     "@deepseek-ai/dsh-app-boot": "*",
-    "@deepseek-ai/dsh-tools": ">=0.2.0-rc.1 <0.2.1-0 || >=0.2.1-rc.1 <0.3.0-0"
+    "@deepseek-ai/dsh-tools": ">=0.2.0-rc.1 <0.2.1-0 || >=0.2.1-rc.1 <0.3.0-0",
+    "@deepseek-ai/schemastery": "*"
   },
   "license": "MIT",
   "dependencies": {
@@ -82,6 +83,9 @@
       "optional": true
     },
     "@deepseek-ai/cordis-plugin-include": {
+      "optional": true
+    },
+    "@deepseek-ai/schemastery": {
       "optional": true
     }
   },

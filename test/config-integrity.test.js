@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
+import { randomUUID } from 'node:crypto'
 import { parse } from 'yaml'
 import { createMcpConfig, publicServers, paths } from '../lib/mcp-config.js'
 import { commitFiles } from '../lib/config-files.js'
@@ -127,6 +128,30 @@ test('concurrent configuration changes are rejected before writing', t => {
   const { home, p } = fixture(t, 'external edit\n')
   assert.throws(() => commitFiles([{ file: p, before: 'stale snapshot\n', after: 'ours\n' }], home), /修改/)
   assert.equal(fs.readFileSync(p, 'utf8'), 'external edit\n')
+})
+
+test('successful writes cap the backup history at twenty copies; failed writes keep them all', t => {
+  const { home, p, g } = fixture(t, 'before-p\n', '[]\n')
+  const root = path.join(home, 'backups', 'toolgate')
+  fs.mkdirSync(root, { recursive: true })
+  const base = Date.now() - 60_000, synthetic = []
+  for (let i = 25; i > 0; i--) {
+    const name = `${base - i * 1000}-${randomUUID()}`
+    synthetic.push(name)
+    fs.mkdirSync(path.join(root, name))
+    fs.writeFileSync(path.join(root, name, 'manifest.json'), '[]')
+  }
+  commitFiles([{ file: p, before: 'before-p\n', after: 'after-p\n' }], home)
+  const rest = fs.readdirSync(root).sort()
+  assert.equal(rest.length, 20)
+  assert.equal(fs.existsSync(path.join(root, synthetic[0])), false)
+  assert.equal(fs.existsSync(path.join(root, synthetic[synthetic.length - 1])), true)
+  assert.ok(rest.at(-1) > synthetic[synthetic.length - 1]) // the fresh copy is the newest
+  assert.equal(fs.readFileSync(p, 'utf8'), 'after-p\n')
+  const rename = fs.renameSync
+  t.mock.method(fs, 'renameSync', (from, to) => { if (to === g) throw new Error('synthetic failure'); return rename(from, to) })
+  assert.throws(() => commitFiles([{ file: p, before: 'after-p\n', after: 'again-p\n' }, { file: g, before: '[]\n', after: 'again-g\n' }], home), /synthetic failure/)
+  assert.equal(fs.readdirSync(root).length, 21) // a failed write keeps its recovery copy
 })
 
 test('profile and workspace come from the selected host context, never another installed profile or process cwd', () => {
