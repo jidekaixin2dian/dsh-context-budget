@@ -20,7 +20,7 @@ dsh plugin --profile <profile> add https://github.com/jidekaixin2dian/dsh-toolga
 
 On the desktop app, install through its plugin manager when that manager owns the profile. After installing or updating the host half, quit and reopen DSH. The desktop app has no browser-style `Ctrl+R` hard refresh.
 
-Requires Node >=24. Management endpoints require the host's `connection.requestRejection()` and current `profileContext`; integration tests pin DSH **0.2.1-rc.2**. Missing authentication closes the endpoint. A missing profile never falls back to an arbitrary installed profile.
+Requires Node >=24. Management endpoints require the host's `connection.requestRejection()` and current `profileContext`; integration tests pin DSH **0.2.1-rc.3**. Missing authentication closes the endpoint. A missing profile never falls back to an arbitrary installed profile.
 
 ## Use
 
