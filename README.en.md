@@ -1,6 +1,6 @@
 # Toolgate
 
-**0.1.2** aligns the Release tag with its archive, including the client startup fix, authenticated management, precise YAML edits and lifecycle cleanup. See [Changelog](CHANGELOG.md) and [Security](SECURITY.md).
+**0.1.3** adds the operation audit log, backup retention cap, the `allowSessionOverride` config and stricter API validation. See [Changelog](CHANGELOG.md) and [Security](SECURITY.md).
 
 Manage MCP servers and skills in DeepSeek Harness, and choose which tools enter the next prompt.
 

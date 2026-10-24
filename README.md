@@ -1,6 +1,6 @@
 # 工具闸门
 
-**0.1.2** 对齐 Release 标签与安装包，完整包含启动冲突修复、管理接口认证、YAML 精确编辑和生命周期修复。见[变更记录](CHANGELOG.md)与[安全说明](SECURITY.md)。
+**0.1.3** 新增操作审计日志、备份保留上限、`allowSessionOverride` 开关与更严格的接口校验。见[变更记录](CHANGELOG.md)与[安全说明](SECURITY.md)。
 
 管理 MCP 服务器与 Skill，决定下一轮 prompt 带哪些工具。
 
