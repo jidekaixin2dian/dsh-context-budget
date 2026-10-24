@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.1.3 — 2026-10-24
 
 - Add an append-only audit log at `DSH_HOME/toolgate-audit.jsonl`: one JSON line
   per management write (op, target id, outcome, timestamp), never containing
