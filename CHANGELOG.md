@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Re-pin the host regression suite to DSH 0.2.1-rc.3 (`1f81c047`): rc.2 → rc.3
+  changed no source in the packages this plugin uses, and the authenticated host
+  suite passes unchanged (11 passed / 1 browser-gated skip). Shipped plugin
+  code and the peer range (`>=0.2.1-rc.1 <0.3.0-0`) are unchanged.
+
 ## 0.1.3 — 2026-10-24
 
 - Add an append-only audit log at `DSH_HOME/toolgate-audit.jsonl`: one JSON line

@@ -20,7 +20,7 @@ dsh plugin --profile <profile> add https://github.com/jidekaixin2dian/dsh-toolga
 
 桌面端由应用管理 profile 时，请在插件管理器里安装。安装或更新 host 半后，退出并重新打开 DSH；桌面端没有浏览器式 `Ctrl+R` 硬刷新。
 
-需要 Node >=24。管理接口要求宿主提供 `connection.requestRejection()` 和当前 `profileContext`；本仓库的宿主回归固定到 DSH **0.2.1-rc.2**。缺少认证能力时接口拒绝访问，缺少当前 profile 时不猜测其他安装目录。
+需要 Node >=24。管理接口要求宿主提供 `connection.requestRejection()` 和当前 `profileContext`；本仓库的宿主回归固定到 DSH **0.2.1-rc.3**。缺少认证能力时接口拒绝访问，缺少当前 profile 时不猜测其他安装目录。
 
 ## 使用
 
