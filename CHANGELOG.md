@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Declare the supported host explicitly: `engines.dsh >=0.2.1-rc.2`, with CI
+  continuously verifying both 0.2.1-rc.2 and 0.2.1-rc.3.
 - Re-pin the host regression suite to DSH 0.2.1-rc.3 (`1f81c047`): rc.2 → rc.3
   changed no source in the packages this plugin uses, and the authenticated host
   suite passes unchanged (11 passed / 1 browser-gated skip). Shipped plugin
